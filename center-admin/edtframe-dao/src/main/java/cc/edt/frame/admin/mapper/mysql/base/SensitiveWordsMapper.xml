@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.base.SensitiveWordsDao">
+    <resultMap type="cc.edt.frame.model.entity.base.SensitiveWords" id="SensitiveWordsMap">
+        <id property="id" column="id"/>
+        <result property="content" column="content"/>
+        <result property="addTime" column="add_time"/>
+        <result property="addUser" column="add_user"/>
+        <result property="addUserName" column="add_user_name"/>
+    </resultMap>
+    <select id="listSensitiveWordsByCondition" parameterType="SensitiveWordsCondition" resultMap="SensitiveWordsMap">
+        SELECT
+        bsw.id,
+        bsw.content,
+        bsw.add_time,
+        bsw.add_user,
+        bui. NAME AS add_user_name
+        FROM
+        base_sensitive_words bsw
+        LEFT JOIN base_user_info bui ON bui.id = bsw.add_user
+        WHERE 1=1
+        <if test="params.content != null and params.content != ''">
+            AND bsw.content like CONCAT('%',#{params.content},'%')
+        </if>
+        ORDER BY
+        bsw.add_time DESC
+    </select>
+    <select id="getSensitiveWordsById" resultMap="SensitiveWordsMap">
+        select bsw.id, bsw.content, bsw.add_time, bsw.add_user
+        from base_sensitive_words bsw
+        where bsw.id = #{id}
+    </select>
+    <select id="listSensitiveWords" resultType="string">
+        select content
+        from base_sensitive_words
+    </select>
+    <delete id="deleteSensitiveWords">
+        DELETE
+        FROM base_sensitive_words
+        WHERE id = #{id}
+    </delete>
+    <insert id="saveSensitiveWords">
+        INSERT INTO base_sensitive_words (id, content, add_time, add_user)
+        VALUES (#{id}, #{content}, #{addTime}, #{addUser})
+    </insert>
+    <update id="updateSensitiveWords">
+        update
+        base_sensitive_words
+        set content = #{content}
+        where id = #{id}
+    </update>
+    <insert id="saveSensitiveWordsByBatch">
+        INSERT INTO base_sensitive_words (
+        id,
+        content,
+        add_time,
+        add_user
+        )
+        VALUES
+        <foreach collection="list" item="sensitiveWords" separator=",">
+            (
+            #{sensitiveWords.id},
+            #{sensitiveWords.content},
+            #{sensitiveWords.addTime},
+            #{sensitiveWords.addUser}
+            )
+        </foreach>
+    </insert>
+    <select id="listSensitiveWordsContent" resultType="String">
+        SELECT bsw.content
+        FROM base_sensitive_words bsw
+    </select>
+</mapper>

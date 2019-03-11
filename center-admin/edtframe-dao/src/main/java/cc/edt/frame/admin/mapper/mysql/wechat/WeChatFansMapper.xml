@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.wechat.WeChatFansDao">
+    <resultMap type="cc.edt.frame.model.entity.wechat.WeChatFans" id="weChatFansMap">
+        <id property="id" column="id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="accountName" column="account_name"/>
+        <result property="openId" column="openid"/>
+        <result property="subscribe" column="subscribe"/>
+        <result property="nickName" column="nickname"/>
+        <result property="sex" column="sex"/>
+        <result property="city" column="city"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="language" column="language"/>
+        <result property="headImgUrl" column="head_img_url"/>
+        <result property="subscribeTime" column="subscribe_time"/>
+        <result property="unsubscribeTime" column="unsubscribe_time"/>
+        <result property="unionId" column="unionid"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <select id="getWeChatFansByOpenId" parameterType="String" resultMap="weChatFansMap">
+        select openid
+        from base_wechat_fans_info
+        where openid = #{openId}
+    </select>
+    <insert id="saveWeChatFans">
+        insert into base_wechat_fans_info (id,
+        account_id,
+        openid,
+        subscribe,
+        nickname,
+        sex,
+        city,
+        country,
+        province,
+        language,
+        head_img_url,
+        subscribe_time,
+        unsubscribe_time,
+        unionid,
+        remark)
+        values (#{id},
+        #{accountId},
+        #{openId},
+        #{subscribe},
+        #{nickName},
+        #{sex},
+        #{city},
+        #{country},
+        #{province},
+        #{language},
+        #{headImgUrl},
+        #{subscribeTime},
+        #{unsubscribeTime},
+        #{unionId},
+        #{remark})
+    </insert>
+    <update id="updateWeChatFansByOpenId">
+        update
+        base_wechat_fans_info
+        set subscribe = #{subscribe},
+        nickname = #{nickName},
+        sex = #{sex},
+        city = #{city},
+        country = #{country},
+        province = #{province},
+        language = #{language},
+        head_img_url = #{headImgUrl},
+        subscribe_time = #{subscribeTime},
+        unionid = #{unionId},
+        remark = #{remark}
+        where openid = #{openId}
+    </update>
+    <select id="listWeChatFansByCondition" parameterType="weChatFansCondition" resultMap="weChatFansMap">
+        select
+        wx.id,
+        wx.openid,
+        wx.subscribe,
+        wx.nickname,
+        wx.sex,
+        wx.city,
+        wx.country,
+        wx.province,
+        wx.language,
+        wx.head_img_url,
+        wx.subscribe_time,
+        wx.unsubscribe_time,
+        wx.unionid,
+        wai.name as account_name,
+        wx.remark
+        from
+        base_wechat_fans_info wx left join base_wechat_account_info
+        wai
+        on wai.id = wx.account_id
+        where 1 = 1 and
+        wai.mechanisms_id in (select mechanisms_id
+        from base_user_mechanisms_link
+        where user_id = #{params.userId}) and wai.id = #{params.accountId}
+        <if test='params.startTime != null and params.startTime != "" and params.endTime != null and params.endTime != "" '>
+            <![CDATA[AND DATE_FORMAT( wx.subscribe_time, '%Y-%m-%d') >= #{params.startTime} AND
+            DATE_FORMAT( wx.subscribe_time, '%Y-%m-%d') <= #{params.endTime}]]>
+        </if>
+        <if test='params.name != null and params.name != ""'>
+            and (wx.nickname like concat('%',#{params.name},'%')) or
+            (wx.openid like concat('%',#{params.name},'%'))
+        </if>
+        <if test='params.state != null and params.state != ""'>
+            and wx.subscribe = #{params.state}
+        </if>
+        order by wai.name, wx.subscribe_time desc
+    </select>
+    <update id="updateWeChatFansUnsubscribeTimeByOpenId">
+        update base_wechat_fans_info
+        set subscribe = #{subscribe},
+        unsubscribe_time = #{unsubscribeTime}
+        where openid = #{openId}
+    </update>
+    <select id="listWeChatFansByAccountId" resultMap="weChatFansMap">
+        select wx.id,
+        wx.openid,
+        wx.subscribe,
+        wx.nickname,
+        wx.sex,
+        wx.city,
+        wx.country,
+        wx.province,
+        wx.language,
+        wx.head_img_url,
+        wx.subscribe_time,
+        wx.unsubscribe_time,
+        wx.unionid
+        from base_wechat_fans_info wx
+        left join base_wechat_account_info ac on ac.id = wx.account_id
+        where wx.account_id = #{accountId}
+    </select>
+
+</mapper>

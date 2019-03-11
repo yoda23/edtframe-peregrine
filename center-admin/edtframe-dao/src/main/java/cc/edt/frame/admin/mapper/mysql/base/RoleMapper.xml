@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.base.RoleDao">
+    <resultMap type="cc.edt.frame.model.entity.base.Role" id="RoleMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="reMark" column="remark"/>
+        <result property="addTime" column="add_time"/>
+        <result property="addUser" column="add_user"/>
+        <result property="addUserName" column="add_user_name"/>
+        <collection property="listMenu" ofType="cc.edt.frame.model.entity.base.Menu">
+            <id property="id" column="menu_id"/>
+            <result property="name" column="menu_name"/>
+            <result property="parentId" column="menu_parent_id"/>
+            <result property="openUrl" column="menu_open_url"/>
+            <result property="icon" column="menu_icon"/>
+        </collection>
+        <collection property="listRights" ofType="cc.edt.frame.model.entity.base.Rights">
+            <id property="id" column="rights_id"/>
+            <result property="name" column="rights_name"/>
+            <result property="parentId" column="rights_parent_id"/>
+        </collection>
+    </resultMap>
+    <select id="listRoleByCondition" parameterType="RoleCondition"
+            resultMap="RoleMap">
+        select
+        r.id,
+        r.name,
+        r.remark,
+        r.add_time,
+        r.add_user,
+        u.name as add_user_name
+        from
+        base_role_info r
+        left join base_user_info u on r.add_user = u.id
+        where
+        1 = 1 and u.mechanisms_id in (select buml.mechanisms_id
+        from base_user_mechanisms_link buml
+        where
+        user_id = #{params.userId})
+        <if test="params.roleName != null and params.roleName != ''">
+            and r.name like concat('%',#{params.roleName},'%')
+        </if>
+        order by r.add_time desc
+    </select>
+    <insert id="saveRole">
+        insert into base_role_info (id, name, remark, add_time, add_user)
+        values (#{id}, #{name}, #{reMark}, #{addTime}, #{addUser})
+    </insert>
+    <select id="getRoleByName" resultMap="RoleMap">
+        select r.id, r.name, r.remark
+        from base_role_info r
+        where r.name = #{name}
+    </select>
+    <select id="getRoleById" resultMap="RoleMap">
+        select r.id, r.name, r.remark
+        from base_role_info r
+        where r.id = #{id}
+    </select>
+    <update id="updateRole">
+        update base_role_info
+        set name = #{name},
+        remark = #{reMark}
+        where id = #{id}
+    </update>
+    <delete id="deleteRole">
+        delete
+        from base_role_info
+        where id = #{id}
+    </delete>
+    <select id="listRoleByIdForMenu" resultMap="RoleMap">
+        select bri.id,
+        bri.name,
+        bri.remark,
+        bmi.id as menu_id,
+        bmi.parent_id as menu_parent_id,
+        bmi.name as menu_name,
+        bmi.open_url as menu_open_url,
+        bmi.icon as menu_icon
+        from base_role_info bri
+        left join base_role_menu brm on bri.id = brm.role_id
+        left join base_menu_info bmi on brm.menu_id = bmi.id
+        where bri.id = #{id}
+        order by bmi.id
+    </select>
+    <select id="listRoleByIdForRights" resultMap="RoleMap">
+        select bri.id,
+        bri.name,
+        bri.remark,
+        rights.id as rights_id,
+        rights.name as rights_name,
+        rights.parent_id as rights_parent_id
+        from base_role_info bri
+        left join base_role_rights brr on bri.id = brr.role_id
+        left join base_rights_info rights on brr.rights_id = rights.id
+        where bri.id = #{id}
+        order by rights.id
+    </select>
+    <insert id="saveRoleMenuLinked">
+        insert into base_role_menu (role_id, menu_id)
+        VALUES (#{roleId}, #{menuId})
+    </insert>
+    <delete id="deleteRoleMenuLinked">
+        delete
+        from base_role_menu
+        where role_id = #{roleId}
+    </delete>
+    <insert id="saveRoleRightsLinked">
+        insert into base_role_rights (role_id, rights_id)
+        VALUES (#{roleId}, #{rightsId})
+    </insert>
+    <delete id="deleteRoleRightsLinked">
+        delete
+        from base_role_rights
+        where role_id = #{roleId}
+    </delete>
+</mapper>

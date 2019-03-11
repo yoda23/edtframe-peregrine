@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.base.UserDao">
+    <resultMap type="cc.edt.frame.model.entity.base.User" id="userMap">
+        <id property="id" column="id"/>
+        <result property="mechanismsId" column="mechanisms_id"/>
+        <result property="roleId" column="role_id"/>
+        <result property="loginId" column="login_id"/>
+        <result property="loginPassword" column="login_password"/>
+        <result property="name" column="name"/>
+        <result property="active" column="active"/>
+        <result property="addTime" column="add_time"/>
+        <result property="addUser" column="add_user"/>
+        <association property="mechanisms" javaType="cc.edt.frame.model.entity.base.Mechanisms">
+            <id property="id" column="m_id"/>
+            <result property="parentId" column="m_parent_id"/>
+            <result property="name" column="m_name"/>
+            <result property="code" column="m_code"/>
+            <result property="linkName" column="m_link_name"/>
+            <result property="linkPhone" column="m_link_phone"/>
+        </association>
+        <association property="role" javaType="cc.edt.frame.model.entity.base.Role">
+            <id property="id" column="r_id"/>
+            <result property="name" column="r_name"/>
+            <result property="reMark" column="r_remark"/>
+        </association>
+    </resultMap>
+    <resultMap id="userMechanismsLinkedMap" type="cc.edt.frame.model.entity.base.UserMechanismsLinked">
+        <result property="mechanismsId" column="mechanisms_id"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+    <select id="login" resultMap="userMap">
+        SELECT u.id,
+        u.role_id,
+        u.mechanisms_id,
+        u.login_id,
+        u.login_password,
+        u.name,
+        u.active,
+        u.add_time,
+        u.add_user,
+        r.name AS r_name,
+        u.id,
+        m.name AS m_name
+        FROM base_user_info u
+        LEFT JOIN base_role_info r ON u.role_id = r.id
+        LEFT JOIN base_mechanisms_info m ON u.mechanisms_id = m.id
+        WHERE u.login_id =
+        #{loginId}
+    </select>
+    <select id="listUserByCondition" parameterType="UserCondition"
+            resultMap="userMap">
+        SELECT
+        u.id,
+        u.login_id,
+        u.name,
+        u.active,
+        u.add_time,
+        u.add_user,
+        r.name AS r_name,
+        m.name AS m_name
+        FROM base_user_info u
+        LEFT JOIN base_role_info r ON r.id = u.role_id
+        LEFT JOIN base_mechanisms_info m ON m.id = u.mechanisms_id
+        WHERE 1 = 1 AND u.mechanisms_id IN (SELECT buml.mechanisms_id
+        FROM base_user_mechanisms_link buml
+        WHERE
+        user_id = #{params.userId})
+        <if test="params.name != null and params.name !=''">
+            and u.name like CONCAT('%',#{params.name},'%')
+        </if>
+        ORDER BY u.add_time DESC
+    </select>
+    <select id="getUserByLoginId" resultMap="userMap">
+        SELECT id, login_id
+        FROM base_user_info
+        WHERE login_id = #{loginId}
+    </select>
+    <insert id="saveUser">
+        INSERT INTO base_user_info (id,
+        role_id,
+        mechanisms_id,
+        login_id,
+        login_password,
+        name,
+        active,
+        add_time,
+        add_user)
+        VALUES (#{id},
+        #{roleId},
+        #{mechanismsId},
+        #{loginId},
+        #{loginPassword},
+        #{name},
+        #{active},
+        #{addTime},
+        #{addUser})
+    </insert>
+    <select id="getUserById" resultMap="userMap">
+        SELECT u.id,
+        u.role_id,
+        u.mechanisms_id,
+        u.login_id,
+        u.login_password,
+        u.name,
+        u.active,
+        u.name,
+        u.active,
+        m.id AS m_id,
+        m.name AS m_name
+        FROM base_user_info u
+        JOIN base_mechanisms_info m ON u.mechanisms_id = m.id
+        WHERE u.id = #{id}
+    </select>
+    <update id="updateUser">
+        UPDATE base_user_info
+        SET login_id = #{loginId},
+        name = #{name},
+        role_id = #{roleId},
+        mechanisms_id = #{mechanismsId}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteUser">
+        DELETE
+        FROM base_user_info
+        WHERE id = #{id}
+    </delete>
+    <insert id="saveUserMechanismsLinked">
+        INSERT INTO base_user_mechanisms_link (user_id, mechanisms_id)
+        VALUES (#{userId}, #{mechanismsId})
+    </insert>
+    <delete id="deleteUserMechanismsLinked">
+        DELETE
+        FROM base_user_mechanisms_link
+        WHERE user_id = #{userId}
+    </delete>
+    <select id="listUserMechanismsLinkedByUserId" resultMap="userMechanismsLinkedMap">
+        SELECT *
+        FROM base_user_mechanisms_link
+        WHERE user_id = #{userId}
+    </select>
+    <update id="updateState">
+        UPDATE base_user_info
+        SET active = #{active}
+        WHERE id = #{id}
+    </update>
+    <select id="listUserByMechanismsId" resultType="string">
+        SELECT id
+        FROM base_user_info bui
+        WHERE mechanisms_id = #{mechanismsId}
+    </select>
+    <update id="updateUserInfo">
+        UPDATE base_user_info
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+    <update id="updateLoginPassword">
+        UPDATE
+        base_user_info
+        SET login_password = #{loginPassword}
+        WHERE id = #{id}
+    </update>
+</mapper>

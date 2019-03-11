@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.base.MechanismsDao">
+    <resultMap type="cc.edt.frame.model.entity.base.Mechanisms" id="MechanismsMap">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="linkName" column="link_name"/>
+        <result property="linkPhone" column="link_phone"/>
+        <result property="addUser" column="add_user"/>
+        <result property="addUserName" column="add_user_name"/>
+        <result property="addTime" column="add_time"/>
+        <result property="parentName" column="parent_name"/>
+    </resultMap>
+    <insert id="saveMechanisms">
+        insert into base_mechanisms_info (id,
+        parent_id,
+        name,
+        code,
+        link_name,
+        link_phone,
+        add_user,
+        add_time)
+        values (#{id},
+        #{parentId},
+        #{name},
+        #{code},
+        #{linkName},
+        #{linkPhone},
+        #{addUser},
+        #{addTime})
+
+    </insert>
+    <update id="updateMechanisms">
+        update base_mechanisms_info
+        set parent_id = #{parentId},
+        name = #{name},
+        code = #{code},
+        link_name = #{linkName},
+        link_phone = #{linkPhone}
+        where id = #{id}
+    </update>
+    <delete id="deleteMechanisms">
+        delete
+        from base_mechanisms_info
+        where id in
+        (select a.id from (select id from base_mechanisms_info where FIND_IN_SET(id, getChildList(#{id}))) a)
+    </delete>
+    <select id="getMechanismsByCode" resultMap="MechanismsMap">
+        SELECT id,
+        parent_id,
+        name,
+        code,
+        link_name,
+        link_phone,
+        add_user,
+        add_time
+        FROM base_mechanisms_info
+        WHERE code =
+        #{code}
+    </select>
+    <select id="getMechanismsByName" resultMap="MechanismsMap">
+        SELECT id,
+        parent_id,
+        name,
+        code,
+        link_name,
+        link_phone,
+        add_user,
+        add_time
+        FROM base_mechanisms_info
+        WHERE name = #{name}
+    </select>
+    <select id="getMechanismsById" resultMap="MechanismsMap">
+        SELECT bmi.id,
+        bmi.parent_id,
+        bmi.name,
+        bmi.code,
+        bmi.link_name,
+        bmi.link_phone,
+        bmi.add_user,
+        bmi.add_time,
+        bmi2.name as parent_name
+        from base_mechanisms_info bmi
+        left join base_mechanisms_info bmi2 on bmi2.id = bmi.parent_id
+        WHERE bmi.id = #{id}
+    </select>
+    <select id="listMechanismsByCondition" parameterType="MechanismsCondition"
+            resultMap="MechanismsMap">
+        SELECT
+        bmi.id,
+        bmi.parent_id,
+        bmi.name,
+        bmi.code,
+        bmi.link_name,
+        bmi.link_phone,
+        bmi.add_time,
+        u.name as add_user_name,
+        bmi2.name as parent_name
+        FROM
+        base_mechanisms_info bmi left join base_mechanisms_info bmi2 on bmi2.id = bmi.parent_id
+        left join base_user_info u ON bmi.add_user=u.id
+        where bmi.id in (SELECT id FROM base_mechanisms_info WHERE
+        FIND_IN_SET(id,
+        getChildList(#{params.organizationId})))
+        <if test="params.name != null and params.name != ''">
+            and bmi.name like CONCAT('%',#{params.name},'%')
+        </if>
+        order by bmi.add_time
+    </select>
+    <delete id="deleteAllMechanisms">
+        DELETE
+        FROM base_mechanisms_info
+    </delete>
+    <select id="listMechanismsChild" resultMap="MechanismsMap">
+        SELECT bmi.id,
+        bmi.parent_id,
+        bmi2.name as parent_name,
+        bmi.name,
+        bmi.code,
+        bmi.link_name,
+        bmi.link_phone,
+        bmi.add_user,
+        bmi.add_time
+        FROM base_mechanisms_info bmi
+        left join base_mechanisms_info bmi2 on bmi2.id = bmi.parent_id
+        WHERE FIND_IN_SET(bmi.id, getChildList(#{organizationId}))
+        ORDER BY bmi.code, bmi.add_time
+    </select>
+    <select id="listMechanismsParentById"
+            resultMap="MechanismsMap">
+        SELECT id
+        FROM base_mechanisms_info
+        WHERE FIND_IN_SET(id, getParentList(#{mechanismsId}))
+    </select>
+    <insert id="saveUserMechanismsLinked">
+        INSERT INTO base_user_mechanisms_link (user_id, mechanisms_id)
+        VALUES (#{userId}, #{mechanismsId})
+    </insert>
+    <delete id="deleteUserMechanismsLinked">
+        delete
+        from base_user_mechanisms_link
+        where mechanisms_id in
+        (select id from base_mechanisms_info where FIND_IN_SET(id, getChildList(#{id})))
+    </delete>
+
+</mapper>

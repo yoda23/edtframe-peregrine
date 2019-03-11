@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.base.PhoneLocationDao">
+    <resultMap type="cc.edt.frame.model.entity.location.PhoneLocation" id="PhoneLocationMap">
+        <id property="id" column="id"/>
+        <result property="prefix" column="prefix"/>
+        <result property="mobileType" column="mobile_type"/>
+        <result property="phoneHeader" column="phone_header"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="areaCode" column="area_code"/>
+        <result property="postCode" column="postcode"/>
+
+    </resultMap>
+    <select id="getPhoneLocationByHeader"
+            resultMap="PhoneLocationMap">
+        SELECT p.prefix,
+        p.mobile_type,
+        p.phone_header,
+        p.province,
+        p.city,
+        p.area_code,
+        p.postcode
+        FROM base_phone_location p
+        WHERE p.phone_header = #{header}
+    </select>
+</mapper>

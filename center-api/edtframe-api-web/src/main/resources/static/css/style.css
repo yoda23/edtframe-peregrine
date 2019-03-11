@@ -1,0 +1,41 @@
+/***
+ * 1.1.0.css
+ * 2017-09-8 版
+ * css/
+***/
+@import url(iconfont.css);
+
+a {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
+
+*, body, div, a, input, select {
+    font-size: 14px;
+}
+
+body {
+    -webkit-overflow-scrolling: touch;
+}
+
+/*style start*/
+.hui-s-wart {
+    width: 70%;
+    margin: 35% auto;
+    text-align: center;
+}
+
+.hui-s-wart .title-icon {
+    font-size: 140px;
+    color: #99ffff;
+    text-align: center;
+}
+
+.hui-s-wart .title-le {
+    font-size: 16px;
+    margin-top: 20px;
+    color: #999;
+    text-align: center;
+}

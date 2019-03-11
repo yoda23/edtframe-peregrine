@@ -1,0 +1,265 @@
+.cus-body-bg {
+    background: #fff;
+    padding: 1.428571rem 1.428571rem 3.571428rem 1.428571rem;
+}
+
+.introhide {
+    display: none !important;
+}
+
+.introshow {
+    display: block;
+}
+
+.logohow {
+    display: none;
+    width: 60px;
+    height: 49px;
+    background-image: url(../images/logo.png);
+}
+
+.custom-font {
+    font-size: 16px !important;
+}
+
+.dmin-pagetabs {
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+    position: fixed;
+    top: 50px;
+    right: 0;
+    z-index: 999;
+    width: 100%;
+    padding-left: 220px;
+}
+
+@media screen and (max-width: 992px) {
+    .layui-layout-admin .layui-side {
+        transform: translate3d(0px, 0, 0);
+        -webkit-transform: translate3d(0px, 0, 0);
+        width: 220px;
+    }
+
+    .layadmin-pagetabs, .layui-layout-admin .layui-body, .layui-layout-admin .layui-footer, .layui-layout-admin .layui-layout-left {
+        left: 220px;
+    }
+}
+
+.layui-nav .cus-gunli {
+    position: inherit;
+}
+
+/*
+nav.page-tabs {
+    margin-left: 40px;
+    width: 100000px;
+    height: 40px;
+    overflow: hidden;
+}
+.page-tabs a {
+    display: block;
+    float: left;
+    border-right: solid 1px #eee;
+    padding: 0 15px;
+		color: #999;}
+ .content-tabs {
+}
+.content-tabs {
+    position: relative;
+    height: 42px;
+    background: #fafafa;
+    line-height: 40px;
+}
+
+.content-tabs .roll-nav, .page-tabs-list {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    color: #999;
+    z-index: 2;
+    top: 0;
+}
+
+.content-tabs .roll-left {
+    left: 0;
+    border-right: solid 1px #eee;
+}
+
+.content-tabs .roll-right {
+    right: 0;
+    border-left: solid 1px #eee;
+}
+
+.content-tabs button {
+    background: #fff;
+    border: 0;
+    height: 40px;
+    width: 40px;
+    outline: none;
+}
+
+.content-tabs button:hover {
+    background: #fafafa;
+}
+.content-tabs .roll-right {
+    right: 0;
+    border-left: solid 1px #eee;
+}
+.content-tabs .roll-nav, .page-tabs-list {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    color: #999;
+    z-index: 2;
+    top: 0;}
+.content-tabs button {
+    background: #fff;
+    border: 0;
+    height: 40px;
+    width: 40px;
+    outline: none;
+} */
+nav.page-tabs .page-tabs-content {
+    float: left;
+}
+
+.cus-frame {
+    background: #f2f2f2;
+}
+
+.cus-fluid {
+    padding: 15px;
+    background: #f2f2f2;
+    min-height: 430px;
+}
+
+.cus-content {
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+}
+
+.cus-disflex {
+    display: flex;
+}
+
+.cus_tree_scroll {
+    overflow-x: scroll;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cus-right {
+    flex: 1;
+}
+
+.cus-prs {
+    position: relative;
+}
+
+.cus-mou-ts {
+    border-bottom: 8px #eee solid;
+    padding-bottom: 5px;
+}
+
+.cus-pous {
+    box-sizing: border-box;
+    padding: 10px 20px 20px 20px;
+    background: #fff;
+    border-radius: 4px;
+    width: 97%;
+    border: 1px #eee solid;
+}
+
+.cus-ruslid {
+    float: right;
+}
+
+.cus-ulis-left {
+    padding: 0 0;
+}
+
+.cus-ruslid .ilu {
+    position: initial;
+    margin: 0;
+    right: auto;
+    top: 0;
+}
+
+.cus-ruslid .layui-btn-container .layui-btn {
+    margin-bottom: 0;
+}
+
+.cus-pel {
+    width: 320px;
+}
+
+.cus-pel2 {
+    width: 0px;
+}
+
+.cus-down,
+.cus-down2 {
+    width: 15px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    background: #ccc;
+    position: absolute;
+    z-index: 99;
+    top: 50%;
+    right: 3%;
+    transform: translateY(-50%);
+    -webkit-border-radius: 4px 0 0 4px;
+    -moz-border-radius: 4px 0 0 4px;
+    border-radius: 4px 0 0 4px;
+    color: #666;
+    cursor: pointer;
+}
+
+.cus-down2 {
+    -webkit-border-radius: 0px 4px 4px 0;
+    -moz-border-radius: 0px 4px 4px 0;
+    border-radius: 0px 4px 4px 0;
+    background: #009688;
+    color: #fff;
+}
+
+.cus-down:hover {
+    background: #aaa;
+    color: #fff;
+}
+
+.cus-down2:hover {
+    background: #00bcaa;
+}
+
+.cus-input-file {
+    width: 560px;
+    border: 0;
+    background: #fff;
+}
+
+.cus-psike {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: #f2f2f2;
+    padding-top: 12px !important;
+}
+
+.layui-input-block .cus-btn-file {
+    position: absolute !important;
+    top: 0px !important;
+    right: 0px !important;
+}

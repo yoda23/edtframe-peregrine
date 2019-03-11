@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.base.PhoneOperatorDao">
+    <resultMap type="cc.edt.frame.model.entity.operator.PhoneOperator" id="PhoneOperatorMap">
+        <id property="id" column="id"/>
+        <result property="prefix" column="prefix"/>
+        <result property="operator" column="operator"/>
+    </resultMap>
+    <select id="listPhoneOperatorByCondition" parameterType="phoneOperatorCondition"
+            resultMap="PhoneOperatorMap">
+        select
+        id,
+        prefix,
+        operator
+        from
+        base_phone_operator
+        where 1=1
+        <if test='params.name != null and params.name != ""'>
+            and operator= #{params.name}
+        </if>
+        order by operator,prefix
+    </select>
+    <select id="getPhoneOperatorById" resultMap="PhoneOperatorMap">
+        SELECT id, prefix, operator
+        FROM base_phone_operator
+        WHERE id = #{id}
+    </select>
+    <insert id="savePhoneOperator">
+        INSERT INTO base_phone_operator (id, prefix, operator)
+        VALUES (#{id}, #{prefix}, #{operator})
+    </insert>
+    <update id="updatePhoneOperator">
+        UPDATE base_phone_operator
+        SET prefix = #{prefix},
+        operator = #{operator}
+        WHERE id = #{id}
+    </update>
+    <delete id="deletePhoneOperator">
+        DELETE
+        FROM base_phone_operator
+        WHERE id = #{id}
+    </delete>
+    <select id="getPhoneOperatorByPrefix" resultMap="PhoneOperatorMap">
+        SELECT id, prefix, operator
+        FROM base_phone_operator
+        WHERE prefix = #{prefix}
+    </select>
+</mapper>

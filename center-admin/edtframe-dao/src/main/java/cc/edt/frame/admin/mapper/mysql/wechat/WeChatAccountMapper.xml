@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.admin.dao.wechat.WeChatAccountDao">
+    <resultMap type="cc.edt.frame.model.entity.wechat.WeChatAccount" id="WeChatAccountMap">
+        <id property="id" column="id"/>
+        <result property="originalId" column="original_id"/>
+        <result property="mechanismsId" column="mechanisms_id"/>
+        <result property="mechanismsName" column="mechanisms_name"/>
+        <result property="appId" column="appid"/>
+        <result property="appSecret" column="appsecret"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopKey" column="shop_key"/>
+        <result property="certificatePath" column="certificate_path"/>
+        <result property="token" column="token"/>
+        <result property="tokenFlag" column="token_flag"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="addUser" column="add_user"/>
+        <result property="addTime" column="add_time"/>
+        <result property="addUserName" column="add_user_name"/>
+        <result property="picPath" column="pic_path"/>
+    </resultMap>
+    <insert id="saveWeChatAccount">
+        insert into base_wechat_account_info (id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        type,
+        add_user,
+        add_time,
+        pic_path)
+        values (#{id},
+        #{mechanismsId},
+        #{originalId},
+        #{appId},
+        #{appSecret},
+        #{shopId},
+        #{shopKey},
+        #{certificatePath},
+        #{token},
+        #{tokenFlag},
+        #{name},
+        #{type},
+        #{addUser},
+        #{addTime},
+        #{picPath})
+    </insert>
+    <update id="updateWeChatAccount">
+        update base_wechat_account_info
+        set mechanisms_id = #{mechanismsId},
+        original_id = #{originalId},
+        appid = #{appId},
+        appsecret = #{appSecret},
+        token = #{token},
+        token_flag = #{tokenFlag},
+        name = #{name},
+        type = #{type},
+        shop_id = #{shopId},
+        shop_key = #{shopKey},
+        certificate_path = #{certificatePath},
+        pic_path = #{picPath}
+        where id = #{id}
+    </update>
+    <delete id="deleteWeChatAccount">
+        delete
+        from base_wechat_account_info
+        where id = #{id}
+    </delete>
+    <select id="getWeChatAccountByOriginalId" resultMap="WeChatAccountMap">
+        select id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        add_time,
+        add_user,
+        type
+        from base_wechat_account_info
+        where original_id =
+        #{originalId}
+    </select>
+    <select id="getWeChatAccountById" resultMap="WeChatAccountMap">
+        select t.id,
+        t.mechanisms_id,
+        i.name as mechanisms_name,
+        t.original_id,
+        t.appid,
+        t.appsecret,
+        t.shop_id,
+        t.shop_key,
+        t.certificate_path,
+        t.token,
+        t.token_flag,
+        t.name,
+        t.type,
+        t.pic_path
+        from base_wechat_account_info t
+        left join base_mechanisms_info i on t.mechanisms_id = i.id
+        where t.id = #{id}
+    </select>
+    <select id="listWeChatAccountByCondition" parameterType="WeChatAccountCondition"
+            resultMap="WeChatAccountMap">
+        select account.id,
+        account.mechanisms_id,
+        mechanisms.name AS mechanisms_name,
+        account.original_id,
+        account.appid,
+        account.appsecret,
+        account.shop_id,
+        account.shop_key,
+        account.certificate_path,
+        account.token,
+        account.token_flag,
+        account.name,
+        account.pic_path,
+        account.add_time,
+        account.add_user,
+        account.type,
+        user.name as add_user_name
+        from base_wechat_account_info account
+        left join base_user_info user on user.id = account.add_user
+        left join base_mechanisms_info mechanisms on account.mechanisms_id = mechanisms.id
+        where 1 = 1
+        and account.mechanisms_id in
+        (select buml.mechanisms_id from base_user_mechanisms_link buml where user_id = #{params.userId})
+        <if test="params.name != null and params.name != ''">
+            and account.name like CONCAT('%',#{params.name},'%')
+        </if>
+        order by account.add_time desc
+    </select>
+    <select id="listAllWeChatAccount" resultMap="WeChatAccountMap">
+        select id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        type,
+        add_user,
+        add_time
+        from base_wechat_account_info
+    </select>
+    <select id="getTokenByTokenFlag" resultType="String">
+        select token
+        from base_wechat_account_info
+        where token_flag = #{tokenFlag}
+    </select>
+    <select id="getWeChatAccountByAppId" resultMap="WeChatAccountMap">
+        select id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        type
+        from base_wechat_account_info
+        where appid = #{appId}
+    </select>
+    <select id="listWeChatAccountByloginId" resultMap="WeChatAccountMap">
+        select account.id,
+        account.mechanisms_id,
+        account.original_id,
+        account.appid,
+        account.appsecret,
+        account.shop_id,
+        account.shop_key,
+        account.certificate_path,
+        account.token,
+        account.token_flag,
+        account.name,
+        account.type
+        from base_user_info u
+        left join base_user_mechanisms_link buml on u.id = buml.user_id
+        right join base_wechat_account_info account on account.mechanisms_id = buml.mechanisms_id
+        where u.login_id = #{loginId}
+    </select>
+    <select id="getWeChatAccountByMemchanismsId" resultMap="WeChatAccountMap">
+        SELECT id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        SHOP_ID,
+        SHOP_KEY,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        type
+        FROM base_wechat_account_info
+        WHERE mechanisms_id = #{mechanismsId}
+    </select>
+    <select id="checkSame" resultMap="WeChatAccountMap">
+        select id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        type,
+        add_user,
+        add_time
+        from base_wechat_account_info
+        where (name =
+        #{name} or
+        original_id = #{originalId} or appid =
+        #{appId} or appsecret =
+        #{appSecret} or token_flag =
+        #{tokenFlag})
+    </select>
+</mapper>

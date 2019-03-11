@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.api.dao.wechat.WeChatAccountDao">
+    <resultMap type="cc.edt.frame.model.entity.wechat.WeChatAccount" id="WeChatAccountMap">
+        <id property="id" column="id"/>
+        <result property="originalId" column="original_id"/>
+        <result property="mechanismsId" column="mechanisms_id"/>
+        <result property="mechanismsName" column="mechanisms_name"/>
+        <result property="appId" column="appid"/>
+        <result property="appSecret" column="appsecret"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopKey" column="shop_key"/>
+        <result property="certificatePath" column="certificate_path"/>
+        <result property="token" column="token"/>
+        <result property="tokenFlag" column="token_flag"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="addUser" column="add_user"/>
+        <result property="addTime" column="add_time"/>
+        <result property="addUserName" column="add_user_name"/>
+        <result property="picPath" column="pic_path"/>
+    </resultMap>
+
+    <select id="getWeChatAccountByOriginalId" resultMap="WeChatAccountMap">
+        select id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        add_time,
+        add_user,
+        type
+        from base_wechat_account_info
+        where original_id =
+        #{originalId}
+    </select>
+    <select id="getWeChatAccountById" resultMap="WeChatAccountMap">
+        select t.id,
+        t.mechanisms_id,
+        i.name as mechanisms_name,
+        t.original_id,
+        t.appid,
+        t.appsecret,
+        t.shop_id,
+        t.shop_key,
+        t.certificate_path,
+        t.token,
+        t.token_flag,
+        t.name,
+        t.type,
+        t.pic_path
+        from base_wechat_account_info t
+        left join base_mechanisms_info i on t.mechanisms_id = i.id
+        where t.id = #{id}
+    </select>
+
+    <select id="getWeChatAccountByAppId" resultMap="WeChatAccountMap">
+        select id,
+        mechanisms_id,
+        original_id,
+        appid,
+        appsecret,
+        shop_id,
+        shop_key,
+        certificate_path,
+        token,
+        token_flag,
+        name,
+        type
+        from base_wechat_account_info
+        where appid = #{appId}
+    </select>
+    <select id="getTokenByTokenFlag" resultType="String">
+        select token
+        from base_wechat_account_info
+        where token_flag = #{tokenFlag}
+    </select>
+</mapper>

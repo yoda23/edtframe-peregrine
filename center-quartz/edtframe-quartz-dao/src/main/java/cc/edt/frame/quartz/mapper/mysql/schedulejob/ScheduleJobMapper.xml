@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.edt.frame.quartz.dao.schedulejob.ScheduleJobDao">
+    <resultMap type="cc.edt.frame.model.entity.schedulejob.ScheduleJob" id="ScheduleJobMap">
+        <id property="id" column="id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="jobStatus" column="job_status"/>
+        <result property="jobGroup" column="job_group"/>
+        <result property="cronExpression" column="cron_expression"/>
+        <result property="description" column="description"/>
+        <result property="beanName" column="bean_name"/>
+        <result property="methodName" column="method_name"/>
+        <result property="addTime" column="add_time"/>
+    </resultMap>
+    <select id="listScheduleJobByAll" resultMap="ScheduleJobMap">
+        SELECT bsj.id,
+        bsj.job_name,
+        bsj.job_status,
+        bsj.job_group,
+        bsj.cron_expression,
+        bsj.description,
+        bsj.bean_name,
+        bsj.method_name,
+        bsj.add_time
+        FROM base_schedule_job bsj
+        where bsj.job_status = 'running'
+        ORDER BY bsj.add_time DESC
+    </select>
+</mapper>
